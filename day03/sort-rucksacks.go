@@ -33,7 +33,9 @@ func priority(char rune) int {
 
 func main() {
 	scanner := bufio.NewScanner(os.Stdin)
-	total := 0
+	totalCompPri := 0
+	totalBadgePri := 0
+	var group []string
 	for scanner.Scan() {
 		rucksack := scanner.Text()
 		comp1 := rucksack[:len(rucksack)/2]
@@ -41,9 +43,21 @@ func main() {
 
 		common := runeInBoth(comp1, comp2)
 		pri := priority(common[0])
-		total += pri
+		totalCompPri += pri
+
+		group = append(group, rucksack)
+		if len(group) == 3 {
+			common := runeInBoth(group[0], group[1])
+			common = runeInBoth(string(common), group[2])
+
+			pri := priority(common[0])
+			totalBadgePri += pri
+
+			group = nil
+		}
 
 		// fmt.Printf("Rucksack:\n  left  = %s\n  right = %s\n  common = %c (%d)\n", comp1, comp2, common, pri)
 	}
-	fmt.Printf("Total comparment priorities: %d\n", total)
+	fmt.Printf("Total comparment priorities: %d\n", totalCompPri)
+	fmt.Printf("Total badge priorities: %d\n", totalBadgePri)
 }
