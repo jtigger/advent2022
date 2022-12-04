@@ -60,14 +60,14 @@ func player1Throw(roundInput string) (Throw, error) {
 	}
 }
 
-func player2Throw(roundInput string) (Throw, error) {
+func player2Throw(p1Throw Throw, roundInput string) (Throw, error) {
 	switch roundInput[2] {
 	case 'X':
-		return Rock, nil
+		return p1Throw.Beats(), nil
 	case 'Y':
-		return Paper, nil
+		return p1Throw, nil
 	case 'Z':
-		return Scissor, nil
+		return p1Throw.BeatenBy(), nil
 	default:
 		return 0, fmt.Errorf("could not find player two's throw in \"%s\" (expected one of \"X\", \"Y\", \"Z\")", roundInput)
 	}
@@ -89,7 +89,7 @@ func main() {
 			fmt.Fprintf(os.Stderr, "Problem with round #%d: %s", line, err)
 			os.Exit(1)
 		}
-		p2, err := player2Throw(roundInput)
+		p2, err := player2Throw(p1, roundInput)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Problem with round #%d: %s", line, err)
 			os.Exit(1)
