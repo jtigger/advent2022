@@ -14,8 +14,18 @@ const (
 	Scissor
 )
 
+var throwByRank = [...]Throw{Scissor, Rock, Paper, Scissor, Rock}
+
 func (t Throw) String() string {
 	return [...]string{"Rock", "Paper", "Scissors"}[t]
+}
+
+func (t Throw) Beats() Throw {
+	return throwByRank[int(t+1)-1]
+}
+
+func (t Throw) BeatenBy() Throw {
+	return throwByRank[int(t+1)+1]
 }
 
 type Round struct {
@@ -25,32 +35,16 @@ type Round struct {
 
 // P2Score turns the points player 2 earned in this Round: 0 if lossed; 3 if tired; 6 if won.
 func (r Round) P2Score() int {
-	p1Rank, p2Rank := r.rankThrows()
-
 	var p2Score int
 	switch {
-	case p2Rank < p1Rank:
+	case r.player2.BeatenBy() == r.player1:
 		p2Score = 0
-	case p2Rank == p1Rank:
+	case r.player2 == r.player1:
 		p2Score = 3
-	case p2Rank > p1Rank:
+	case r.player2.Beats() == r.player1:
 		p2Score = 6
 	}
 	return p2Score
-}
-
-func (r Round) rankThrows() (int, int) {
-	// the three possible throws, ranked; prefixed with what throw loses to Rock and suffixed with what beats Scissor.
-	var throwByRank = [...]Throw{Scissor, Rock, Paper, Scissor, Rock}
-
-	p1Rank := int(r.player1) + 1
-	var p2Rank int
-	for idx := p1Rank - 1; idx <= p1Rank+1; idx++ {
-		if throwByRank[idx] == r.player2 {
-			p2Rank = idx
-		}
-	}
-	return p1Rank, p2Rank
 }
 
 func player1Throw(roundInput string) (Throw, error) {
