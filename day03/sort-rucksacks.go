@@ -8,15 +8,16 @@ import (
 	"unicode"
 )
 
-func runeInBoth(one, other string) rune {
+func runeInBoth(one, other string) []rune {
+	var inBoth []rune
 	for _, oneChar := range one {
 		for _, otherChar := range other {
 			if oneChar == otherChar {
-				return oneChar
+				inBoth = append(inBoth, oneChar)
 			}
 		}
 	}
-	return 0
+	return inBoth
 }
 
 func priority(char rune) int {
@@ -39,10 +40,10 @@ func main() {
 		comp2 := rucksack[len(rucksack)/2:]
 
 		common := runeInBoth(comp1, comp2)
-		pri := priority(common)
+		pri := priority(common[0])
 		total += pri
 
 		// fmt.Printf("Rucksack:\n  left  = %s\n  right = %s\n  common = %c (%d)\n", comp1, comp2, common, pri)
 	}
-	fmt.Printf("Total: %d\n", total)
+	fmt.Printf("Total comparment priorities: %d\n", total)
 }
