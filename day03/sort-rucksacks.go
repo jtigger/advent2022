@@ -38,9 +38,9 @@ func main() {
 	var group []string
 	for scanner.Scan() {
 		rucksack := scanner.Text()
+
 		comp1 := rucksack[:len(rucksack)/2]
 		comp2 := rucksack[len(rucksack)/2:]
-
 		common := runeInBoth(comp1, comp2)
 		pri := priority(common[0])
 		totalCompPri += pri
@@ -55,8 +55,6 @@ func main() {
 
 			group = nil
 		}
-
-		// fmt.Printf("Rucksack:\n  left  = %s\n  right = %s\n  common = %c (%d)\n", comp1, comp2, common, pri)
 	}
 	fmt.Printf("Total comparment priorities: %d\n", totalCompPri)
 	fmt.Printf("Total badge priorities: %d\n", totalBadgePri)
