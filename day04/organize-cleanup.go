@@ -10,6 +10,7 @@ import (
 
 func main() {
 	scanner := bufio.NewScanner(os.Stdin)
+	overlaps := 0
 	completeOverlaps := 0
 	for scanner.Scan() {
 		assignPair := scanner.Text()
@@ -40,6 +41,13 @@ func main() {
 			(startB <= startA && endB >= endA) {
 			completeOverlaps++
 		}
+		if (startB >= startA && startB <= endA) ||
+			(startA >= startB && startA <= endB) {
+			overlaps++
+		} else {
+			fmt.Printf("%s does NOT overlap\n", assignPair)
+		}
 	}
 	fmt.Printf("Total complete overlaps = %d\n", completeOverlaps)
+	fmt.Printf("Total overlaps = %d\n", overlaps)
 }
