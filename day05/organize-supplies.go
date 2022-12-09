@@ -113,37 +113,48 @@ func (i MoveInstr9001) ApplyOn(stacks []Stack) error {
 	return nil
 }
 
+func mustBeKeyword(token, keyword string) error {
+	if token != keyword {
+		return fmt.Errorf("expected keyword '%s'; was '%s'", keyword, token)
+	}
+	return nil
+}
+func mustBeInteger(token, name string) (int, error) {
+	val, err := strconv.ParseInt(token, 10, 16)
+	if err != nil {
+		return 0, fmt.Errorf("expected %s (as an integer); was: '%s' ", name, token)
+	}
+	return int(val), nil
+}
+
 func parse(line string) (quantity, sourceStackNum, sinkStackNum int, err error) {
 	tokens := strings.Split(line, " ")
 
-	if tokens[0] != "move" {
-		return 0, 0, 0,
-			fmt.Errorf("expected keyword 'move'; was '%s'", tokens[0])
-	}
-	qty, err := strconv.ParseInt(tokens[1], 10, 16)
+	err = mustBeKeyword(tokens[0], "move")
 	if err != nil {
-		return 0, 0, 0,
-			fmt.Errorf("expected quantity (as an integer); was: '%s' ", tokens[1])
+		return 0, 0, 0, err
 	}
-	if tokens[2] != "from" {
-		return 0, 0, 0,
-			fmt.Errorf("expected keyword 'from'; was '%s'", tokens[2])
-	}
-	source, err := strconv.ParseInt(tokens[3], 10, 16)
+	quantity, err = mustBeInteger(tokens[1], "quantity")
 	if err != nil {
-		return 0, 0, 0,
-			fmt.Errorf("expected source stack number (as an integer); was: '%s' ", tokens[3])
+		return 0, 0, 0, nil
 	}
-	if tokens[4] != "to" {
-		return 0, 0, 0,
-			fmt.Errorf("expected keyword 'to'; was '%s'", tokens[4])
-	}
-	sink, err := strconv.ParseInt(tokens[5], 10, 16)
+	err = mustBeKeyword(tokens[2], "from")
 	if err != nil {
-		return 0, 0, 0,
-			fmt.Errorf("expected sink stack number (as an integer); was: '%s' ", tokens[5])
+		return 0, 0, 0, err
 	}
-	return int(qty), int(source), int(sink), nil
+	sourceStackNum, err = mustBeInteger(tokens[3], "source stack number")
+	if err != nil {
+		return 0, 0, 0, err
+	}
+	err = mustBeKeyword(tokens[4], "to")
+	if err != nil {
+		return 0, 0, 0, err
+	}
+	sinkStackNum, err = mustBeInteger(tokens[5], "sink stack number")
+	if err != nil {
+		return 0, 0, 0, err
+	}
+	return quantity, sourceStackNum, sinkStackNum, nil
 }
 
 func main() {
