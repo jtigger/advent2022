@@ -164,4 +164,14 @@ func main() {
 		totalSize += dir.ContentsSize()
 	}
 	fmt.Printf("sum dirs <= 100,000 = %d\n", totalSize)
+	fmt.Printf("total disk usage: %d\n", fs.root.ContentsSize())
+	freeSpace := 70_000_000 - fs.root.ContentsSize()
+	minReqDel := 30_000_000 - freeSpace
+	fmt.Printf("min required to free for update: %d\n", minReqDel)
+	for _, dir := range dirs {
+		if dir.ContentsSize() >= minReqDel {
+			fmt.Printf("delete dir `%s` of size %d\n", dir.name, dir.ContentsSize())
+			break
+		}
+	}
 }
