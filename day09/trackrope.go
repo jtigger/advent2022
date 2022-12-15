@@ -8,13 +8,13 @@ import (
 	"strconv"
 	"strings"
 
-	"day09/pkg/grid"
+	"day09/pkg/rope"
 )
 
 func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 
-	rope := grid.NewGrid()
+	rope := rope.NewLength()
 	for scanner.Scan() {
 		line := scanner.Text()
 		tokens := strings.Split(line, " ")
