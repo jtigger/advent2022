@@ -9,14 +9,14 @@ type Position struct {
 }
 
 type Knot struct {
-	pos   Position
-	tail  *Knot
-	trail map[Position]bool
+	pos      Position
+	follower *Knot
+	trail    map[Position]bool
 }
 
-func NewKnot(tail *Knot) *Knot {
+func NewKnot(follower *Knot) *Knot {
 	k := &Knot{}
-	k.tail = tail
+	k.follower = follower
 	k.trail = make(map[Position]bool)
 	k.trail[k.pos] = true
 	return k
@@ -24,37 +24,73 @@ func NewKnot(tail *Knot) *Knot {
 
 func (k *Knot) Right() {
 	k.pos.X += 1
-	if int(math.Abs(float64(k.pos.X-k.tail.pos.X))) > 1 {
-		k.tail.pos.X += 1
-		k.tail.pos.Y = k.pos.Y
-		k.tail.trail[k.tail.pos] = true
+	if k.follower != nil {
+		k.follower.FollowRight(k.pos)
+	}
+}
+
+func (k *Knot) FollowRight(lead Position) {
+	if int(math.Abs(float64(lead.X-k.pos.X))) > 1 {
+		k.pos.X += 1
+		k.pos.Y = lead.Y
+		k.trail[k.pos] = true
+	}
+	if k.follower != nil {
+		k.follower.FollowRight(k.pos)
 	}
 }
 
 func (k *Knot) Left() {
 	k.pos.X -= 1
-	if int(math.Abs(float64(k.pos.X-k.tail.pos.X))) > 1 {
-		k.tail.pos.X -= 1
-		k.tail.pos.Y = k.pos.Y
-		k.tail.trail[k.tail.pos] = true
+	if k.follower != nil {
+		k.follower.FollowLeft(k.pos)
+	}
+}
+
+func (k *Knot) FollowLeft(lead Position) {
+	if int(math.Abs(float64(lead.X-k.pos.X))) > 1 {
+		k.pos.X -= 1
+		k.pos.Y = lead.Y
+		k.trail[k.pos] = true
+	}
+	if k.follower != nil {
+		k.follower.FollowLeft(k.pos)
 	}
 }
 
 func (k *Knot) Up() {
 	k.pos.Y += 1
-	if int(math.Abs(float64(k.pos.Y-k.tail.pos.Y))) > 1 {
-		k.tail.pos.Y += 1
-		k.tail.pos.X = k.pos.X
-		k.tail.trail[k.tail.pos] = true
+	if k.follower != nil {
+		k.follower.FollowUp(k.pos)
+	}
+}
+
+func (k *Knot) FollowUp(lead Position) {
+	if int(math.Abs(float64(lead.Y-k.pos.Y))) > 1 {
+		k.pos.Y += 1
+		k.pos.X = lead.X
+		k.trail[k.pos] = true
+	}
+	if k.follower != nil {
+		k.follower.FollowUp(k.pos)
 	}
 }
 
 func (k *Knot) Down() {
 	k.pos.Y -= 1
-	if int(math.Abs(float64(k.pos.Y-k.tail.pos.Y))) > 1 {
-		k.tail.pos.Y -= 1
-		k.tail.pos.X = k.pos.X
-		k.tail.trail[k.tail.pos] = true
+	if k.follower != nil {
+		k.follower.FollowDown(k.pos)
+	}
+}
+
+func (k *Knot) FollowDown(lead Position) {
+	if int(math.Abs(float64(lead.Y-k.pos.Y))) > 1 {
+		k.pos.Y -= 1
+		k.pos.X = lead.X
+		k.trail[k.pos] = true
+	}
+	if k.follower != nil {
+		k.follower.FollowDown(k.pos)
 	}
 }
 
@@ -64,10 +100,15 @@ type Length struct {
 }
 
 func NewLength() *Length {
-	l := &Length{}
-	l.tail = NewKnot(nil)
-	l.head = NewKnot(l.tail)
-	return l
+	numKnots := 2
+	g := &Length{}
+	g.tail = NewKnot(nil)
+	prev := g.tail
+	for c := 1; c < numKnots; c++ {
+		prev = NewKnot(prev)
+	}
+	g.head = prev
+	return g
 }
 
 func (l *Length) TailJourneyLength() int {

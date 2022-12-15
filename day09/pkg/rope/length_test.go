@@ -14,35 +14,35 @@ func TestGrid_TailJourneyLength(t *testing.T) {
 	}
 	testCases := []TestCase{
 		{
-			"Moving right, tail follows head",
+			"Moving right, follower follows head",
 			func(length *rope.Length) {
 				length.Right(4)
 			},
 			4,
 		},
 		{
-			"Moving left, tail follows head",
+			"Moving left, follower follows head",
 			func(length *rope.Length) {
 				length.Left(3)
 			},
 			3,
 		},
 		{
-			"Moving up, tail follows head",
+			"Moving up, follower follows head",
 			func(length *rope.Length) {
 				length.Up(5)
 			},
 			5,
 		},
 		{
-			"Moving down, tail follows head",
+			"Moving down, follower follows head",
 			func(length *rope.Length) {
 				length.Up(6)
 			},
 			6,
 		},
 		{
-			"Moving diagonal, tail falls in line behind head",
+			"Moving diagonal, follower falls in line behind head",
 			func(length *rope.Length) {
 				length.Right(1)
 				length.Up(1)
@@ -52,7 +52,7 @@ func TestGrid_TailJourneyLength(t *testing.T) {
 			2,
 		},
 		{
-			"When the tail revisits a position, it is *not* counted again",
+			"When the follower revisits a position, it is *not* counted again",
 			func(length *rope.Length) {
 				length.Up(6)
 				length.Down(6)
