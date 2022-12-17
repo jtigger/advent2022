@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -13,8 +14,11 @@ import (
 
 func main() {
 	scanner := bufio.NewScanner(os.Stdin)
+	numKnots := flag.Int("knots", 2, "Number of knots in the rope.")
+	flag.Parse()
 
-	rope := rope.NewLength()
+	rope := rope.NewLength(*numKnots)
+
 	for scanner.Scan() {
 		line := scanner.Text()
 		tokens := strings.Split(line, " ")

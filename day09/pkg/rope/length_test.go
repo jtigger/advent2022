@@ -6,12 +6,13 @@ import (
 	"day09/pkg/rope"
 )
 
-func TestGrid_TailJourneyLength(t *testing.T) {
-	type TestCase struct {
-		name   string
-		prog   func(length *rope.Length)
-		length int
-	}
+type TestCase struct {
+	name   string
+	prog   func(length *rope.Length)
+	length int
+}
+
+func TestLength_2Knots_TailJourneyLength(t *testing.T) {
 	testCases := []TestCase{
 		{
 			"Moving right, follower follows head",
@@ -75,7 +76,34 @@ func TestGrid_TailJourneyLength(t *testing.T) {
 		},
 	}
 	for idx, tc := range testCases {
-		rope := rope.NewLength()
+		rope := rope.NewLength(2)
+		tc.prog(rope)
+		if rope.TailJourneyLength() != tc.length {
+			t.Fatalf("Test %d: \"%s\"\n  expected tail trail of length %d; was %d",
+				idx, tc.name, tc.length, rope.TailJourneyLength())
+		}
+	}
+}
+
+func TestLength_10Knots_TailJourneyLength(t *testing.T) {
+	testCases := []TestCase{
+		{
+			"Example with tail movement (from Advent of Code)",
+			func(length *rope.Length) {
+				length.Right(5)
+				length.Up(8)
+				length.Left(8)
+				length.Down(3)
+				length.Right(17)
+				length.Down(10)
+				length.Left(25)
+				length.Up(20)
+			},
+			36,
+		},
+	}
+	for idx, tc := range testCases {
+		rope := rope.NewLength(10)
 		tc.prog(rope)
 		if rope.TailJourneyLength() != tc.length {
 			t.Fatalf("Test %d: \"%s\"\n  expected tail trail of length %d; was %d",
