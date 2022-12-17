@@ -144,14 +144,20 @@ func (l *Length) AsGrid() []string {
 	return grid
 }
 
-func (l *Length) Right(steps int) {
-	l.Printf("=======\nR %d\n", steps)
-	for step := 1; step <= steps; step++ {
-		l.head.Right()
+func (l *Length) PrintGrid() {
+	if l.Output != nil {
 		for _, row := range l.AsGrid() {
 			l.Printf("%s\n", row)
 		}
 		l.Printf("\n")
+	}
+}
+
+func (l *Length) Right(steps int) {
+	l.Printf("=======\nR %d\n", steps)
+	for step := 1; step <= steps; step++ {
+		l.head.Right()
+		l.PrintGrid()
 	}
 }
 
@@ -159,10 +165,7 @@ func (l *Length) Left(steps int) {
 	l.Printf("=======\nL %d\n", steps)
 	for step := 1; step <= steps; step++ {
 		l.head.Left()
-		for _, row := range l.AsGrid() {
-			l.Printf("%s\n", row)
-		}
-		l.Printf("\n")
+		l.PrintGrid()
 	}
 }
 
@@ -170,10 +173,7 @@ func (l *Length) Up(steps int) {
 	l.Printf("=======\nU %d\n", steps)
 	for step := 1; step <= steps; step++ {
 		l.head.Up()
-		for _, row := range l.AsGrid() {
-			l.Printf("%s\n", row)
-		}
-		l.Printf("\n")
+		l.PrintGrid()
 	}
 }
 
@@ -181,9 +181,6 @@ func (l *Length) Down(steps int) {
 	l.Printf("=======\nD %d\n", steps)
 	for step := 1; step <= steps; step++ {
 		l.head.Down()
-		for _, row := range l.AsGrid() {
-			l.Printf("%s\n", row)
-		}
-		l.Printf("\n")
+		l.PrintGrid()
 	}
 }
