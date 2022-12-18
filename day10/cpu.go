@@ -57,21 +57,32 @@ func main() {
 	samples := make(map[int]int)
 
 	registerX := 1
-	for progIdx := 0; progIdx < 220; progIdx++ {
+	for progIdx := 0; progIdx < len(prog); progIdx++ {
 		cycleNum := progIdx + 1
-		if probe[probeIdx] == cycleNum {
+		pixelPos := progIdx % 40
+		spriteLeftEdge := registerX - 1
+		spriteRightEdge := registerX + 1
+
+		if pixelPos == 0 {
+			fmt.Println()
+		}
+		if pixelPos >= spriteLeftEdge && pixelPos <= spriteRightEdge {
+			fmt.Printf("#")
+		} else {
+			fmt.Printf(".")
+		}
+
+		if probeIdx < len(probe) && probe[probeIdx] == cycleNum {
 			samples[cycleNum] = registerX
 			probeIdx++
 		}
 		prog[progIdx].PostCycleAction(&registerX)
 	}
 
-	fmt.Printf("Samples were:\n")
 	totalSignal := 0
 	for cycle, x := range samples {
-		fmt.Printf("  @%d = %d\n", cycle, x)
 		totalSignal += cycle * x
 	}
 
-	fmt.Printf("Total signal strength: %d\n", totalSignal)
+	fmt.Printf("\nTotal signal strength: %d\n", totalSignal)
 }
