@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"io"
-	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -45,23 +44,29 @@ func NewCPU() *CPU {
 	return cpu
 }
 
-func (c *CPU) Load(program []string) {
-	for _, line := range program {
+func (c *CPU) Load(program []string) error {
+	for idx, line := range program {
 		tokens := strings.Split(line, " ")
 		switch tokens[0] {
 		case "addx":
+			if len(tokens) != 2 {
+				return fmt.Errorf("on line %d, \"%s\" expected 2 arguments; was %d", idx+1, tokens[0], len(tokens))
+			}
 			c.prog = append(c.prog, Noop{})
 			addend, err := strconv.ParseInt(tokens[1], 10, 32)
 			if err != nil {
-				log.Panicf("Expected integer parameter for %s; was %s; %s", tokens[0], tokens[1], err)
+				return fmt.Errorf("on line %d, \"%s\" expected integer parameter; was \"%s\"; %s", idx+1, tokens[0], tokens[1], err)
 			}
 			c.prog = append(c.prog, AddX{int(addend)})
 		case "noop":
 			c.prog = append(c.prog, Noop{})
+		case "", "#":
+			// allow (and ignore) blank lines or comments
 		default:
-			log.Panicf("Unknown opcode %s", tokens[0])
+			return fmt.Errorf("on line %d, unknown instruction \"%s\"", idx+1, tokens[0])
 		}
 	}
+	return nil
 }
 
 func (c *CPU) Connect(device Device) {
@@ -149,7 +154,11 @@ func main() {
 	probe := NewProbe()
 	display := NewDisplay()
 
-	cpu.Load(program)
+	err := cpu.Load(program)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "failed to load program: %s", err)
+		os.Exit(1)
+	}
 	cpu.Connect(probe)
 	cpu.Connect(display)
 	cpu.Run()
